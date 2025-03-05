@@ -15,43 +15,6 @@ class Post:
         self.likes = [] 
         self.comments = [] 
 
-    def add_like(self, user_id: str) -> bool:
-        """Add a like to the post. Returns True if added, False if already liked."""
-        if user_id not in self.likes:
-            self.likes.append(user_id)
-            self.updated_at = datetime.utcnow()
-            return True
-        return False
-
-    def remove_like(self, user_id: str) -> bool:
-        """Remove a like from the post. Returns True if removed, False if not found."""
-        if user_id in self.likes:
-            self.likes.remove(user_id)
-            self.updated_at = datetime.utcnow()
-            return True
-        return False
-
-    def add_comment(self, comment_id: str) -> None:
-        """Add a comment reference to the post."""
-        self.comments.append(comment_id)
-        self.updated_at = datetime.utcnow()
-
-    def remove_comment(self, comment_id: str) -> bool:
-        """Remove a comment reference from the post. Returns True if removed, False if not found."""
-        if comment_id in self.comments:
-            self.comments.remove(comment_id)
-            self.updated_at = datetime.utcnow()
-            return True
-        return False
-
-    def update_post(self, description: Optional[str] = None, image_url: Optional[str] = None) -> None:
-        """Update post information."""
-        if description:
-            self.description = description
-        if image_url:
-            self.image_url = image_url
-        self.updated_at = datetime.utcnow()
-
     def to_dict(self) -> Dict:
         """Convert post object to dictionary for serialization."""
         return {
@@ -85,3 +48,11 @@ def add_new_post(author_id: str, description: str, image_url: Optional[str] = No
     post = Post(author_id, description, image_url)
     posts_db[post.post_id] = post
     return post
+
+def get_post_by_id(post_id: str) -> Optional[Post]:
+    """Get a post by ID."""
+    return posts_db.get(post_id)
+
+def get_posts() -> List[Post]:
+    """Get all posts."""
+    return list(posts_db.values())

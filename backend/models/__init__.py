@@ -5,9 +5,11 @@ from .like import Like, add_new_like
 from .session import Session, add_new_session
 
 def create_default_data():
-    user1 = add_new_user('jeremy', 'X23$jer', 'https://images.pexels.com/photos/30495756/pexels-photo-30495756/free-photo-of-rustic-wooden-chairs-in-lush-antalya-field.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+    user1 = add_new_user('jeremy', '123', 'https://images.pexels.com/photos/30495756/pexels-photo-30495756/free-photo-of-rustic-wooden-chairs-in-lush-antalya-field.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
     user2 = add_new_user('andy', 'CoolAndy99+', 'https://images.pexels.com/photos/30892987/pexels-photo-30892987/free-photo-of-delicious-pancakes-with-honey-and-strawberries.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
     user3 = add_new_user('sandman', 'SandmanIsCool22++', 'https://images.pexels.com/photos/5846133/pexels-photo-5846133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+
+    session = add_new_session(user1.username, session_id='123')
 
     post1 = add_new_post(user1, 'https://images.pexels.com/photos/30495756/pexels-photo-30495756/free-photo-of-rustic-wooden-chairs-in-lush-antalya-field.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', 'This is a beautiful field.')
     post2 = add_new_post(user2, 'https://images.pexels.com/photos/30892987/pexels-photo-30892987/free-photo-of-delicious-pancakes-with-honey-and-strawberries.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', 'Yummy pancakes!')

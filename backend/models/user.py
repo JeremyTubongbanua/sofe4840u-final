@@ -12,6 +12,17 @@ class User:
         self.password_hash = password_hash
         self.profile_picture_url = profile_picture_url
 
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'User':
+        """Create a User instance from a dictionary."""
+        return cls(
+            username=data['username'],
+            password_hash=data['password_hash'],
+            profile_picture_url=data.get('profile_picture_url'),
+            user_id=data.get('user_id')
+        )
+        
+
     def to_dict(self) -> Dict:
         """Convert user object to dictionary for serialization."""
         return {
