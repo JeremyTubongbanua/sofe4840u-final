@@ -37,6 +37,10 @@ class Comment:
         comment.updated_at = datetime.fromisoformat(data['updated_at'])
         return comment
 
+def get_comment(comment_id: str) -> Optional[Comment]:
+    """Get a comment by ID."""
+    return comments_db.get(comment_id)
+
 def add_new_comment(post_id: str, author_id: str, content: str) -> Comment:
     """Add a new comment to the database."""
     comment = Comment(post_id, author_id, content)
