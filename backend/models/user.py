@@ -1,75 +1,69 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean
-from sqlalchemy.orm import relationship
-from datetime import datetime, timedelta
+from datetime import datetime
 import uuid
-import jwt
-from .base import Base
-from .associations import followers
-from ..utils.security import hash_password, verify_password
+import bcrypt
+from typing import Dict, Optional
 
-class User(Base):
-    __tablename__ = 'users'
-    
-    id = Column(Integer, primary_key=True)
-    public_id = Column(String(50), unique=True, nullable=False)  # Public ID for API exposure
-    username = Column(String(50), unique=True, nullable=False)
-    email = Column(String(100), unique=True, nullable=False)
-    password_hash = Column(String(128), nullable=False)
-    salt = Column(String(29), nullable=False)
-    profile_picture = Column(String(200))
-    bio = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    last_login = Column(DateTime)
-    is_active = Column(Boolean, default=True)
-    mfa_enabled = Column(Boolean, default=False)
-    mfa_secret = Column(String(32))
-    failed_login_attempts = Column(Integer, default=0)
-    account_locked_until = Column(DateTime)
-    
-    # Relationships
-    posts = relationship('Post', back_populates='user', cascade='all, delete-orphan')
-    comments = relationship('Comment', back_populates='user', cascade='all, delete-orphan')
-    likes = relationship('Like', back_populates='user', cascade='all, delete-orphan')
-    sessions = relationship('Session', back_populates='user', cascade='all, delete-orphan')
-    
-    # Many-to-many relationship for followers
-    followed = relationship(
-        'User', secondary=followers,
-        primaryjoin=(followers.c.follower_id == id),
-        secondaryjoin=(followers.c.followed_id == id),
-        backref='followers'
-    )
-    
-    def __init__(self, username, email, password):
-        self.public_id = str(uuid.uuid4())
+users_db = {}
+
+class User:
+    def __init__(self, username: str, password: str, profile_picture_url: Optional[str] = None, user_id: Optional[str] = None):
+        self.user_id = user_id if user_id else str(uuid.uuid4())
         self.username = username
-        self.email = email
-        self.salt = hash_password.generate_salt()
-        self.password_hash = hash_password(password, self.salt)
-        
-    def verify_password(self, password):
-        return verify_password(password, self.password_hash, self.salt)
-    
-    def generate_auth_token(self, secret_key, expires_in=3600):
-        payload = {
-            'exp': datetime.utcnow() + timedelta(seconds=expires_in),
-            'iat': datetime.utcnow(),
-            'sub': self.public_id
+        self.hashed_password = self._hash_password(password)
+        self.profile_picture_url = profile_picture_url
+        self.created_at = datetime.utcnow()
+        self.updated_at = self.created_at
+
+    def update_profile(self, profile_picture_url: Optional[str] = None) -> None:
+        """Update user profile information."""
+        if profile_picture_url:
+            self.profile_picture_url = profile_picture_url
+        self.updated_at = datetime.utcnow()
+
+    def to_dict(self) -> Dict:
+        """Convert user object to dictionary for serialization."""
+        return {
+            'user_id': self.user_id,
+            'username': self.username,
+            'profile_picture_url': self.profile_picture_url,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
         }
-        return jwt.encode(payload, secret_key, algorithm='HS256')
-    
-    def follow(self, user):
-        if not self.is_following(user) and self.id != user.id:
-            self.followed.append(user)
-            return True
-        return False
-    
-    def unfollow(self, user):
-        if self.is_following(user):
-            self.followed.remove(user)
-            return True
-        return False
-    
-    def is_following(self, user):
-        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'User':
+        """Create a User instance from a dictionary."""
+        user = cls(
+            username=data['username'],
+            password="",
+            profile_picture_url=data.get('profile_picture_url'),
+            user_id=data.get('user_id')
+        )
+        user.hashed_password = data['hashed_password']
+        user.created_at = datetime.fromisoformat(data['created_at'])
+        user.updated_at = datetime.fromisoformat(data['updated_at'])
+        return user
+
+    def save():
+        users_db[self.user_id] = self
+
+def add_new_user(username: str, password: str, profile_picture_url: Optional[str] = None) -> User:
+    """Add a new user to the database."""
+    user = User(username, password, profile_picture_url)
+    users_db[user.user_id] = user
+    return user
+
+def save_user(user: User) -> None:
+    """Save a user to the database."""
+    users_db[user.user_id] = user
+
+def get_user_by_username(username: str) -> Optional[User]:
+    """Get a user by username."""
+    for user in users_db.values():
+        if user.username == username:
+            return user
+    return None
+
+def get_user_by_id(user_id: str) -> Optional[User]:
+    """Get a user by ID."""
+    return users_db.get(user_id)
