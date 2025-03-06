@@ -1,19 +1,24 @@
 from datetime import datetime
 import uuid
 from typing import Dict, List, Optional
+from .user import User
 
-posts_db = {}
+posts = []
 
 class Post:
-    def __init__(self, author_id: str, description: str, image_url: Optional[str] = None, post_id: Optional[str] = None):
-        self.post_id = post_id if post_id else str(uuid.uuid4())
-        self.author_id = author_id
+    def __init__(self, author_username: str, description: str, image_url: Optional[str] = None, post_id: Optional[str] = None, likes: Optional[List[str]] = None, comments: Optional[List[str]] = None):
+        self.author_username = author_username
         self.description = description
+        self.author_id = author_username
+        self.updated_at = datetime.utcnow()
+
         self.image_url = image_url
+        self.post_id = post_id if post_id else str(uuid.uuid4())
+
         self.created_at = datetime.utcnow()
-        self.updated_at = self.created_at
-        self.likes = [] 
-        self.comments = [] 
+
+        self.likes = [] # list of usernames
+        self.comments = [] # list of usernames
 
     def to_dict(self) -> Dict:
         """Convert post object to dictionary for serialization."""
@@ -28,31 +33,7 @@ class Post:
             'comments': self.comments
         }
 
-    @classmethod
-    def from_dict(cls, data: Dict) -> 'Post':
-        """Create a Post instance from a dictionary."""
-        post = cls(
-            author_id=data['author_id'],
-            description=data['description'],
-            image_url=data.get('image_url'),
-            post_id=data.get('post_id')
-        )
-        post.likes = data.get('likes', [])
-        post.comments = data.get('comments', [])
-        post.created_at = datetime.fromisoformat(data['created_at'])
-        post.updated_at = datetime.fromisoformat(data['updated_at'])
-        return post
+    def save(self):
+        """Save post to database."""
+        posts.append(self)
 
-def add_new_post(author_id: str, description: str, image_url: Optional[str] = None) -> Post:
-    """Add a new post to the database."""
-    post = Post(author_id, description, image_url)
-    posts_db[post.post_id] = post
-    return post
-
-def get_post_by_id(post_id: str) -> Optional[Post]:
-    """Get a post by ID."""
-    return posts_db.get(post_id)
-
-def get_posts() -> List[Post]:
-    """Get all posts."""
-    return list(posts_db.values())

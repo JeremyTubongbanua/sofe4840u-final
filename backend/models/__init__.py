@@ -1,26 +1,30 @@
-from .user import User, add_new_user
-from .post import Post, add_new_post
-from .comment import Comment, add_new_comment
-from .like import Like, add_new_like
-from .session import Session, add_new_session
+from .user import User
+from .post import Post
+from .session import Session
+from .comment import Comment
+from .challenge import Challenge
+
+# test user private key
+# MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCM1mB5YHpaZzJqvREDXlxjaSIjMIcv7cIXHagu5TvJ3XUaRlJ8U0shDBzvXqH1VY9IX0CKbObAEUy1iiPWJnMF1l3Mi7qqgZ8yl4jU7YiWscaKjnjyEjTx3RNjMpcdI0YTZmVePZrokx1J2fivjvHCpRdY0CQevSjwc+T69J+3ZH98MEaQN9fbP+DvcnfMlf8FNICfOL00Z9pNXd6JVCeEmfRQx9MrkTeNPt9KhFIxZrWpMr0KU416hvl4F9dye2OJrO4DAHUMHuEUxBhiDTLgCOme8Vk/dLSChgCkGo2rPvcvZ8AtktPLckhpOlYhZ8ZgmPILWg4q88KoiR3mteBfAgMBAAECggEABsNIkKuEVJD+B8gaaAoA77kdrYjoBPIqzsdayx2w2EmtFNzpmxS419ZoEUp/BnPcVIJWbA88qV5rS5Bdliv0fARGLstK5GMjDN/f7zGUzH+u4/phbmZXaoHOK4ZDYV/PPqE9HuBgbuiZkHFKEswPaeRZkac1BNDahWlbRn22qay0f2+a2g3RtGciJ+BMmdorqivJNnFOLldWiDnIoyzkNDnzJLdIuSxTCCqaLpz1GlJkzrmxAoxeJ6YcOjVAfSutecAmCfMIPu5wnO82g9XwaRIBJkqE5WjrnWdc/qU5cSvVs1EJo3EKc2srBD6oFkmsPkPoAVFEnbr2uPBBV0Qf4QKBgQC3lYuuzKsbd8niULrxKNcFsq+XJnPntfJKUUUojLS9e32VF7gmt5noD49lx/Ull1sKQSOvgPHI53OATU7nvtNpiDT+p3HMD3QZglf/0omkWJaDxMP3GjU+dyDhdAi+nC3DOH5FZgSY8iLlXlmSQYRdPSeQx3vJ815fknCDUdXRDwKBgQDEZDwelYiwKxmziR9y8PaSzAPx/p/Z/zCXGPL6E+0mwHSFujS7dw2qEmsIgEUr2M4pFBFaJXTonCpXi3fGv+0RuWzjjefNBtxwQX7ulNiLb+dbf0IHxj/I1GfvwvcJ1z2MNsp9bMxOf174XNJCIU+kCfgRsHHV/dxyobCehnBbsQKBgE43/lrMwz6hzDeL9AqaPvsjheLdtFaOVBxMAi5jvQJaokgq4gBFC+Mu9gcEqjOJCHYXCPBW/S1/R9vrlGnzCTqWmRXDHB44m1vfCEVsW87VG9QquuAGn5bsxOqqOKuV+X2LDWneLKlJyYp2p61EEvRzAO+Tvu9trNEFoMCi1noLAoGAbCh7x6g44DTMccj57fZxBYWgQp0lcgyNuRk/b6SbvfTN93wGYJv/hYOhOMxTzAMZ/xuTNt9cFGM1GoOv0mCO8mz5YBUd7RdzPcuEWWbWH2zgsM5UEi4HoNYB69Sm8t98gQUH3a2Wk0CokAWmsk7gKopm+W8AMocd6m/L8nI93PECgYEAtj3GpT0QzqvGn0eBMqLt5rgVarXZ5f35Nc4QaLkttgK4QZVho3cmajo/su/hNmI6UzNQSO8AravuQVw531POBRy5YBl5AwE7GIfrNq5st8s2W4ic/6ryqLH3x1nBMS0s9/o9Lx8D4knT7WrbJ5zNdNXl598OGPR12r6/pFV9yBc=
+
+# test user 2 private key
+# MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC2tkCjxnX44tJkOGB7M3B0NRg5SIIqVaaeIKJGmCpNPWv5eP54ATrcl8EqtEbQZRCA8mT28Sgcoez5rOXYLHa9pRmFNXgZeFSYui6b59rv1z94bexPpZulwAqPNXYCf7XzWPzzGZg9zgoYEbTxNN+suPX9upgrnolXwEjiy+lky46PNE/hKag8ZHAbGDiyrNkDCtA+6dN3kjZuU6JdwMSL7eEurFYvFP45ZsvZTA1PNDVE87vgnvobNiJYcI2/bFsaxgyKDnHwxqFG1Kde/i3zo/090DEYnqLARwEWjVStLVmyPtmukD2DhSvYtISkOhrG3WSKxAIrHjXePE+PIq8NAgMBAAECgf9OJqZ/ZuQPEPXs6DBcgiQXkJ5L4jfK49fgyxSeHXf6kcsdaiNuMRh8QmzdVz7y5Eeq4ANPnNcLaDd0k/+790jS1UuVLsmwG0gUC47kIMgEzozXdi0d5DgvLXVWzAcuCnJJJEcNtGTqCrdGlExQ38zMlFCjtqxf++/DGPwUBiROeAgsxe5t0FimK5Yz92mawTFiHm68yC9bqesa3jz63dtMo0BZu/DWnaonjODRBo8rqTgNuXPvpr6bOB0MDcw9fcVSr0C1IE4IzSoU8GziRUwqx+JMv+3UPRevjMvl8PSZxQtEKdn3gQimSViemU5x2M9/2ObVd5vUreMGQjiR5RsCgYEAvAB5uT8ig4ttySzfs3UvbrDQseHsWfpSHV8fw87Gaeoi7nQpKDyjEtFcnQeVW+02QLqj+1V8W/gCj+lQ9fZPany6OR4wbjXm/FDdAusu+6EzXKEE7xvV6r4dYhX54cxBGkfMWOmx/rcpi8x1vsizwn9r9f/ekMvNPFQcG167yOMCgYEA+Mv4S1j6z3HNL/52NGqwJ15bR5zH4l4K2U7TNpW/HqCjFdMYH8AMNsGL3CKYlzUOlC9EDCZcpIx93vZUjupWMVgDd1OaL8ZQkVyXxZjB6f4XqvHQkUq2MuzJzwzg8Qb4xJeNHRqKFFtj0V0IAV9B8vCSZMR7M+PnQrUJa4fNW08CgYAGAE3iZ+2GHXFHtrL9W4REGEjRJNESnjb40QyGh5c10k+DJRobOrRJ6Xz3VkKiSJQuxMZvQ29Q0D3ksiHveAlY8NpQ8HHDUt0ouLwVV8SMK70j+8/Ygh71+1Ocye7MEmURnbEcNXmFE/uzhrdLe8ShNMgRdjV4kcjfYB/1j7SW2QKBgQDjkWYOPVhEcPpWwPEL5t4zVFo3uY8XXh+cPz5wei4zbIlfiBNTz00ctJIiC774573rCwS5/EjW9e6YB0a25l9qiO+6sMyikEnXfBMS2TPdvN2XLdIxY14eXHoHGeeSb2cSIvEfQswz7Jfzw51z69adyTCOXS23++jnGkKAidnrfwKBgQCr1y3pjIbq5LIsmb4kERxz3xAF2Cw1djoeCe86xnmPYTRIlRyXOldqS4WILk0JWBIwtT8crR2T2DMpg/MSJ2J8AmkFQIr+Dhbs3m7dWGfC6XvGdNhIUrKpO7RlGN2v8qA9ZTT8G8XFmk+kdfg4ya8VX22LObKI+Is+SimcQQKWHQ==
 
 def create_default_data():
-    user1 = add_new_user('jeremy', '123', 'https://images.pexels.com/photos/30495756/pexels-photo-30495756/free-photo-of-rustic-wooden-chairs-in-lush-antalya-field.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
-    user2 = add_new_user('andy', 'CoolAndy99+', 'https://images.pexels.com/photos/30892987/pexels-photo-30892987/free-photo-of-delicious-pancakes-with-honey-and-strawberries.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
-    user3 = add_new_user('sandman', 'SandmanIsCool22++', 'https://images.pexels.com/photos/5846133/pexels-photo-5846133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+    test_user = User('test', 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjNZgeWB6Wmcyar0RA15cY2kiIzCHL+3CFx2oLuU7yd11GkZSfFNLIQwc716h9VWPSF9AimzmwBFMtYoj1iZzBdZdzIu6qoGfMpeI1O2IlrHGio548hI08d0TYzKXHSNGE2ZlXj2a6JMdSdn4r47xwqUXWNAkHr0o8HPk+vSft2R/fDBGkDfX2z/g73J3zJX/BTSAnzi9NGfaTV3eiVQnhJn0UMfTK5E3jT7fSoRSMWa1qTK9ClONeob5eBfXcntjiazuAwB1DB7hFMQYYg0y4AjpnvFZP3S0goYApBqNqz73L2fALZLTy3JIaTpWIWfGYJjyC1oOKvPCqIkd5rXgXwIDAQAB', 'https://images.pexels.com/photos/422202/pexels-photo-422202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+    test_user.save()
 
-    session = add_new_session(user1.username, session_id='123')
+    test_user_2 = User('test_2', 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtrZAo8Z1+OLSZDhgezNwdDUYOUiCKlWmniCiRpgqTT1r+Xj+eAE63JfBKrRG0GUQgPJk9vEoHKHs+azl2Cx2vaUZhTV4GXhUmLoum+fa79c/eG3sT6WbpcAKjzV2An+181j88xmYPc4KGBG08TTfrLj1/bqYK56JV8BI4svpZMuOjzRP4SmoPGRwGxg4sqzZAwrQPunTd5I2blOiXcDEi+3hLqxWLxT+OWbL2UwNTzQ1RPO74J76GzYiWHCNv2xbGsYMig5x8MahRtSnXv4t86P9PdAxGJ6iwEcBFo1UrS1Zsj7ZrpA9g4Ur2LSEpDoaxt1kisQCKx413jxPjyKvDQIDAQAB', 'https://images.pexels.com/photos/422202/pexels-photo-422202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+    test_user_2.save()
 
-    post1 = add_new_post(user1, 'https://images.pexels.com/photos/30495756/pexels-photo-30495756/free-photo-of-rustic-wooden-chairs-in-lush-antalya-field.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', 'This is a beautiful field.')
-    post2 = add_new_post(user2, 'https://images.pexels.com/photos/30892987/pexels-photo-30892987/free-photo-of-delicious-pancakes-with-honey-and-strawberries.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', 'Yummy pancakes!')
-    post3 = add_new_post(user3, 'https://images.pexels.com/photos/5846133/pexels-photo-5846133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', 'A cool photo.')
+    test_post_id = '26490ea8-78cb-4be2-a783-cc78b808de3c'
+    test_post = Post(test_user.username, 'Picture of cows', image_url='https://images.pexels.com/photos/422202/pexels-photo-422202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', post_id=test_post_id, likes=[test_user_2.username], comments=[Comment(test_user.username, 'Cows are cool!')])
+    test_post.save()
 
-    comment1 = add_new_comment(post1, user2, 'Nice photo!')
-    comment2 = add_new_comment(post1, user3, 'Beautiful!')
-    comment3 = add_new_comment(post2, user1, 'Looks delicious!')
-    comment4 = add_new_comment(post3, user2, 'Cool photo!')
-    comment5 = add_new_comment(post3, user1, 'Nice!')
+    test_session_id = 'c9a8b4d6-8c6b-4e2a-83a7-8b80d83c8c6a'
+    session = Session(test_user.username, session_id=test_session_id)
+    session.save()
 
-    like1 = add_new_like(post1, user2)
-    like2 = add_new_like(post1, user3)
-    like3 = add_new_like(post2, user1)
+    challenge = Challenge(test_user.username, challenge_string=f'{test_user.username}:41ca96ee-6770-4194-89f8-6fcc509effa6')
+    challenge.save()
+

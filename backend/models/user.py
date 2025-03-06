@@ -3,52 +3,39 @@ import uuid
 import bcrypt
 from typing import Dict, Optional
 
-users_db = {}
+users = []
 
 class User:
-    def __init__(self, username: str, password_hash: str, profile_picture_url: Optional[str] = None, user_id: Optional[str] = None):
-        self.user_id = user_id if user_id else str(uuid.uuid4())
+    def __init__(self, username: str, public_key: str, profile_picture_url: Optional[str] = None):
         self.username = username
-        self.password_hash = password_hash
+        self.public_key = public_key
         self.profile_picture_url = profile_picture_url
 
     @classmethod
     def from_dict(cls, data: Dict) -> 'User':
         """Create a User instance from a dictionary."""
-        return cls(
+        user = cls(
             username=data['username'],
-            password_hash=data['password_hash'],
-            profile_picture_url=data.get('profile_picture_url'),
-            user_id=data.get('user_id')
+            public_key=data['public_key'],
+            profile_picture_url=data.get('profile_picture_url')
         )
-        
+        return user
 
     def to_dict(self) -> Dict:
         """Convert user object to dictionary for serialization."""
         return {
-            'user_id': self.user_id,
             'username': self.username,
-            'password_hash': self.password_hash,
+            'public_key': self.public_key,
             'profile_picture_url': self.profile_picture_url
         }
 
-def add_new_user(username: str, password_hash: str, profile_picture_url: Optional[str] = None, user_id: Optional[str] = None) -> User:
-    """Add a new user to the database."""
-    user = User(username, password_hash, profile_picture_url, user_id)
-    users_db[user.user_id] = user
-    return user
+    def save(self):
+        """Save user to database."""
+        users.append(self)
 
-def save_user(user: User) -> None:
-    """Save a user to the database."""
-    users_db[user.user_id] = user
-
-def get_user_by_username(username: str) -> Optional[User]:
-    """Get a user by username."""
-    for user in users_db.values():
+def get_user_from_username(username: str) -> Optional[User]:
+    """Get user from database."""
+    for user in users:
         if user.username == username:
             return user
     return None
-
-def get_user_by_id(user_id: str) -> Optional[User]:
-    """Get a user by ID."""
-    return users_db.get(user_id)
