@@ -1,6 +1,5 @@
 from .user import User
 from .post import Post
-from .session import Session
 from .comment import Comment
 from .challenge import Challenge
 
@@ -18,12 +17,9 @@ def create_default_data():
     test_user_2.save()
 
     test_post_id = '26490ea8-78cb-4be2-a783-cc78b808de3c'
-    test_post = Post(test_user.username, 'Picture of cows', image_url='https://images.pexels.com/photos/422202/pexels-photo-422202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', post_id=test_post_id, likes=[test_user_2.username], comments=[Comment(test_user.username, 'Cows are cool!')])
+    test_post = Post(test_user.username, 'Cows', 'Picture of cows', image_url='https://images.pexels.com/photos/422202/pexels-photo-422202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', post_id=test_post_id, likes=[test_user_2.username], comments=[Comment(test_user.username, 'Cows are cool!', profile_picture_url=test_user.profile_picture_url)])
     test_post.save()
 
-    test_session_id = 'c9a8b4d6-8c6b-4e2a-83a7-8b80d83c8c6a'
-    session = Session(test_user.username, session_id=test_session_id)
-    session.save()
 
     challenge = Challenge(test_user.username, challenge_string=f'{test_user.username}:41ca96ee-6770-4194-89f8-6fcc509effa6')
     challenge.save()

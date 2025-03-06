@@ -30,6 +30,9 @@ class Challenge():
 
     def save(self):
         challenges.append(self)
+        
+    def dispose(self):
+        challenges.remove(self)
 
 def create_challenge(username: str) -> Challenge:
     existing_challenge = get_challenge(username)
@@ -39,7 +42,7 @@ def create_challenge(username: str) -> Challenge:
     challenges.append(challenge)
     return challenge
 
-def get_challenge(username: str) -> Challenge:
+def get_active_challenge(username: str) -> Challenge:
     for challenge in challenges:
         if challenge.username == username:
             return challenge
