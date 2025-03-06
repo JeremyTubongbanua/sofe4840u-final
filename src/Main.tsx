@@ -25,7 +25,7 @@ const Main: React.FunctionComponent = () => {
           
             <p>Login</p>
             <input type='text' placeholder='Username'></input>
-            <input type='text' placeholder='Password'></input>
+            <input type='text' placeholder='Private Key'></input>
             <button id='LoginButtion'>
                 Login Button
             </button>

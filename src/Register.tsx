@@ -23,13 +23,25 @@ const Register: React.FunctionComponent = () => {
           
           <header className="App-header">
           
+            <button>
+                Generate RSA 2048 Public/Private Keypair
+            </button>
+            <button>
+                Public Key
+            </button>
+            <button>
+                Private Key
+            </button>
             <p>Register</p>
             <input type='text' placeholder='Username'></input>
-            <input type='text' placeholder='Password'></input>
-            <input type='text' placeholder='Verify Password'></input>
+            <input type='text' placeholder='Public Key'></input>
+            <input type='text' placeholder='Profile Picture Url'></input>
             <button id='LoginButtion'>
                 Complete Registration 
-            </button>    
+            </button>
+            <button id='Login'>
+                Go to Login 
+            </button>
 
             
           </header>
