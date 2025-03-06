@@ -35,7 +35,7 @@ class Challenge():
         challenges.remove(self)
 
 def create_challenge(username: str) -> Challenge:
-    existing_challenge = get_challenge(username)
+    existing_challenge = get_active_challenge(username)
     if existing_challenge:
         challenges.remove(existing_challenge)
     challenge = Challenge(username)
@@ -45,7 +45,11 @@ def create_challenge(username: str) -> Challenge:
 def get_active_challenge(username: str) -> Challenge:
     for challenge in challenges:
         if challenge.username == username:
-            return challenge
+            if challenge.expire_timestamp > int(datetime.now().timestamp()):
+                return challenge
+            else:
+                challenges.remove(challenge)
+                break
     return None
 
 def verify_challenge_response(username: str, signed_challenge: str) -> bool:
