@@ -8,10 +8,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import load_der_public_key, load_pem_public_key
 
 def verify_signature(challenge: str, signed_challenge: str, public_key_b64: str) -> bool:
-    # Decode the base64 public key
     public_key_bytes = base64.b64decode(public_key_b64)
     
-    # Try to load the public key (attempt both DER and PEM formats)
     try:
         public_key = load_der_public_key(
             public_key_bytes, 
@@ -26,13 +24,11 @@ def verify_signature(challenge: str, signed_challenge: str, public_key_b64: str)
         except Exception as e:
             raise ValueError(f"Failed to load public key: {str(e)}")
     
-    # Decode the base64 signature
     try:
         signature = base64.b64decode(signed_challenge)
     except Exception as e:
         raise ValueError(f"Failed to decode signature: {str(e)}")
     
-    # Verify the signature
     try:
         public_key.verify(
             signature,

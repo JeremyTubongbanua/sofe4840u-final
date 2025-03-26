@@ -9,5 +9,5 @@ curl -X POST \
   -H "Content-Type: application/json" \
   -d "{
     \"username\": \"test123\",
-    \"public_key\": \"$public_key\", 
+    \"public_key\": \"$public_key\",
     \"profile_picture_url\": \"$profile_picture_url\"}"

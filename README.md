@@ -109,7 +109,6 @@ Log in with a signed challenge.
 {
   "status": "successful",
   "message": "Login successful",
-  "auth_token": "token",
   "user": {
     "id": "user-id",
     "username": "username"
