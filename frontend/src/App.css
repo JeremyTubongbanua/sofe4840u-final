@@ -443,3 +443,23 @@ nav a {
   margin-bottom: 30px;
   color: #333;
 }
+
+.likes-preview {
+  padding: 0 15px 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.show-likes-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 0 0 5px;
+  text-decoration: underline;
+}
+
+.show-likes-btn:hover {
+  color: #0056b3;
+}

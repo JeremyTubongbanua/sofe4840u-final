@@ -3,6 +3,7 @@ import Comment from './Comment';
 
 const Post = ({ post = {}, currentUser, onAddComment, onToggleLike }) => {
   const [newComment, setNewComment] = useState('');
+  const [showAllLikes, setShowAllLikes] = useState(false);
 
   const handleSubmitComment = (e) => {
     e.preventDefault();
@@ -16,6 +17,37 @@ const Post = ({ post = {}, currentUser, onAddComment, onToggleLike }) => {
   const userLiked = currentUser && likes.includes(currentUser.username);
   
   const comments = post?.comments || [];
+
+  const renderLikesPreview = () => {
+    if (likes.length === 0) return null;
+    
+    const MAX_DISPLAYED_LIKES = 3;
+    let likesText = '';
+    
+    if (likes.length <= MAX_DISPLAYED_LIKES) {
+      likesText = likes.join(', ');
+    } else if (showAllLikes) {
+      likesText = likes.join(', ');
+    } else {
+      likesText = `${likes.slice(0, MAX_DISPLAYED_LIKES).join(', ')} ... and ${likes.length - MAX_DISPLAYED_LIKES} more`;
+    }
+    
+    return (
+      <div className="likes-preview">
+        <span>
+          Liked by: {likesText}
+        </span>
+        {likes.length > MAX_DISPLAYED_LIKES && (
+          <button 
+            className="show-likes-btn" 
+            onClick={() => setShowAllLikes(!showAllLikes)}
+          >
+            {showAllLikes ? 'Show less' : 'Show all'}
+          </button>
+        )}
+      </div>
+    );
+  };
 
   if (!post) return null;
 
@@ -52,6 +84,8 @@ const Post = ({ post = {}, currentUser, onAddComment, onToggleLike }) => {
           {userLiked ? 'Unlike' : 'Like'} ({likes.length})
         </button>
       </div>
+      
+      {renderLikesPreview()}
       
       <div className="comments-section">
         <h4>Comments ({comments.length})</h4>
