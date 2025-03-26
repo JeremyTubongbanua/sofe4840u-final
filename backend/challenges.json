@@ -2,9 +2,9 @@
   "challenges": [
     {
       "username": "test",
-      "expire_timestamp": 1742965079,
-      "challenge_string": "test:41ca96ee-6770-4194-89f8-6fcc509effa6"
+      "expire_timestamp": 1742966664,
+      "challenge_string": "test:c6fdc29d-743d-4e9b-bd1b-e2be447c1e37"
     }
   ],
-  "last_updated": "2025-03-26T05:12:29.603026"
+  "last_updated": "2025-03-26T05:23:24.414307"
 }

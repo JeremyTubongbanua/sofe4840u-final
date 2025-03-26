@@ -7,19 +7,30 @@ import './App.css';
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(() => {
-    const saved = localStorage.getItem('currentUser');
-    return saved ? JSON.parse(saved) : null;
+    const username = localStorage.getItem('username');
+    const privateKey = sessionStorage.getItem('privateKey');
+    
+    if (username) {
+      return {
+        username,
+        privateKey: privateKey || ''
+      };
+    }
+    return null;
   });
 
   useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem('currentUser');
+    if (currentUser && currentUser.username) {
+      localStorage.setItem('username', currentUser.username);
+      if (currentUser.privateKey) {
+        sessionStorage.setItem('privateKey', currentUser.privateKey);
+      }
     }
   }, [currentUser]);
 
   const handleLogout = () => {
+    localStorage.removeItem('username');
+    sessionStorage.removeItem('privateKey');
     setCurrentUser(null);
   };
 
@@ -35,9 +46,7 @@ const App = () => {
           </nav>
         )}
         <Routes>
-          <Route path="/login" element={
-            currentUser ? <Navigate to="/posts" /> : <LoginPage setCurrentUser={setCurrentUser} />
-          } />
+          <Route path="/login" element={<LoginPage setCurrentUser={setCurrentUser} />} />
           <Route path="/register" element={
             currentUser ? <Navigate to="/posts" /> : <RegisterPage />
           } />

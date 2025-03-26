@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { sign } from "../utils/cryptoUtil";
 
 const LoginPage = ({ setCurrentUser }) => {
   const [username, setUsername] = useState("");
@@ -7,79 +8,6 @@ const LoginPage = ({ setCurrentUser }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  const signChallenge = async (challengeString, privateKeyBase64) => {
-    try {
-      let privateKeyBytes;
-
-      if (privateKeyBase64.includes("-----BEGIN")) {
-        const pemContent = privateKeyBase64
-          .replace(/-----(BEGIN|END) (PRIVATE KEY|RSA PRIVATE KEY)-----/g, "")
-          .replace(/\s/g, "");
-        privateKeyBytes = Uint8Array.from(atob(pemContent), (c) =>
-          c.charCodeAt(0)
-        );
-      } else {
-        privateKeyBytes = Uint8Array.from(atob(privateKeyBase64), (c) =>
-          c.charCodeAt(0)
-        );
-      }
-
-      let privateKey;
-      try {
-        privateKey = await window.crypto.subtle.importKey(
-          "pkcs8",
-          privateKeyBytes,
-          {
-            name: "RSA-PSS",
-            hash: { name: "SHA-256" },
-          },
-          false, // not extractable
-          ["sign"]
-        );
-      } catch (pkcs8Error) {
-        try {
-          privateKey = await window.crypto.subtle.importKey(
-            "spki",
-            privateKeyBytes,
-            {
-              name: "RSA-PSS",
-              hash: { name: "SHA-256" },
-            },
-            false,
-            ["sign"]
-          );
-        } catch (spkiError) {
-          console.error("PKCS8 import failed:", pkcs8Error);
-          console.error("SPKI import failed:", spkiError);
-          throw new Error(
-            "Failed to import private key in any supported format"
-          );
-        }
-      }
-
-      const challengeBytes = new TextEncoder().encode(challengeString);
-
-      const signature = await window.crypto.subtle.sign(
-        {
-          name: "RSA-PSS",
-          saltLength: 32, // This matches PSS.MAX_LENGTH in Python cryptography
-        },
-        privateKey,
-        challengeBytes
-      );
-
-      const signatureBytes = new Uint8Array(signature);
-      const signatureBase64 = btoa(
-        String.fromCharCode.apply(null, signatureBytes)
-      );
-
-      return signatureBase64;
-    } catch (error) {
-      console.error("Error signing challenge:", error);
-      throw new Error(`Failed to sign challenge: ${error.message}`);
-    }
-  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -104,7 +32,7 @@ const LoginPage = ({ setCurrentUser }) => {
 
       const challengeString = challengeData.challenge.challenge_string;
 
-      const signedChallenge = await signChallenge(challengeString, privateKey);
+      const signedChallenge = await sign(challengeString, privateKey);
 
       const url2 = `http://127.0.0.1:3000/login`;
       const loginResponse = await fetch(url2, {
@@ -124,11 +52,16 @@ const LoginPage = ({ setCurrentUser }) => {
         throw new Error(loginData.message || "Login failed");
       }
 
-      setCurrentUser({
+      const userInfo = {
         username,
         privateKey,
         ...loginData.user,
-      });
+      };
+      
+      setCurrentUser(userInfo);
+      
+      localStorage.setItem("username", username);
+      sessionStorage.setItem("privateKey", privateKey);
 
       navigate("/posts");
     } catch (err) {

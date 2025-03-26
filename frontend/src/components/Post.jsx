@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Comment from './Comment';
 
-const Post = ({ post, currentUser, onAddComment, onToggleLike }) => {
+const Post = ({ post = {}, currentUser, onAddComment, onToggleLike }) => {
   const [newComment, setNewComment] = useState('');
 
   const handleSubmitComment = (e) => {
@@ -12,20 +12,29 @@ const Post = ({ post, currentUser, onAddComment, onToggleLike }) => {
     }
   };
 
-  const userLiked = post.likes.includes(currentUser.username);
+  const likes = post?.likes || [];
+  const userLiked = currentUser && likes.includes(currentUser.username);
+  
+  const comments = post?.comments || [];
+
+  if (!post) return null;
 
   return (
     <div className="post">
       <div className="post-header">
         <div className="author-info">
-          <img src={post.authorPic} alt={post.author} className="profile-pic" />
-          <span className="author-name">{post.author}</span>
+          <img 
+            src={post?.authorPic || '/default-profile.png'} 
+            alt={post?.author || 'Unknown'} 
+            className="profile-pic" 
+          />
+          <span className="author-name">{post?.author || 'Unknown'}</span>
         </div>
       </div>
       
       <div className="post-content">
-        <h3 className="post-title">{post.title}</h3>
-        <p className="post-description">{post.description}</p>
+        <h3 className="post-title">{post?.title || 'Untitled Post'}</h3>
+        <p className="post-description">{post?.description || 'No description'}</p>
       </div>
       
       <div className="post-actions">
@@ -33,12 +42,12 @@ const Post = ({ post, currentUser, onAddComment, onToggleLike }) => {
           className={`like-button ${userLiked ? 'liked' : ''}`}
           onClick={() => onToggleLike(post.id)}
         >
-          {userLiked ? 'Unlike' : 'Like'} ({post.likes.length})
+          {userLiked ? 'Unlike' : 'Like'} ({likes.length})
         </button>
       </div>
       
       <div className="comments-section">
-        <h4>Comments ({post.comments.length})</h4>
+        <h4>Comments ({comments.length})</h4>
         
         <form onSubmit={handleSubmitComment} className="add-comment">
           <input
@@ -52,8 +61,8 @@ const Post = ({ post, currentUser, onAddComment, onToggleLike }) => {
         </form>
         
         <div className="comments-list">
-          {post.comments.map(comment => (
-            <Comment key={comment.id} comment={comment} />
+          {comments.map((comment, index) => (
+            <Comment key={comment.id || `comment-${index}`} comment={comment} />
           ))}
         </div>
       </div>
