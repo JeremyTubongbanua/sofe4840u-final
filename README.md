@@ -2,245 +2,160 @@
 
 Final Project for SOFE 4840U - Software and Computer Security
 
-## Backend
+## Backend Documentation
 
-### Authentication
+### Directory Structure
 
-This API uses challenge-based authentication with RSA signatures. For authenticated endpoints:
-
-1. First request a challenge via `/create_challenge`
-2. Sign the challenge with your private key
-3. Include the challenge signature in subsequent requests
-
-### Endpoints
-
-#### Key Generation
-
-**GET** `/generate_rsa_2048_keypair`
-
-Generate a new RSA 2048-bit key pair for registration.
-
-**Response:**
-
-```json
-{
-  "private_key": "base64-encoded-private-key-without-headers",
-  "public_key": "base64-encoded-public-key-without-headers"
-}
+```sh
+.
+├── .gitignore  
+├── api.py  
+├── posts.json  
+├── requirements.txt  
+├── users.json  
+├── models/  
+│   ├── __init__.py  
+│   ├── challenge.py  
+│   ├── comment.py  
+│   ├── post.py  
+│   └── user.py  
+└── scripts/  
+  ├── create_challenge.sh  
+  ├── register.sh  
+  ├── sign.sh  
+  ├── signer.py  
+  ├── verifier.py  
+  └── verify.sh  
 ```
 
-#### Registration
+### File Explanations
 
-**POST** `/register`
+- **.gitignore**  
+  Lists files and directories (like `__pycache__/`) that Git should ignore.
 
-Register a new user account.
+- **api.py**  
+  Contains the Flask application and defines HTTP endpoints for user registration, login, post interactions (like adding comments and toggling likes), and challenge-based authentication.
 
-**Request Body:**
+- **posts.json**  
+  Stores serialized post objects including details like title, description, likes, and comments.
 
-```json
-{
-  "username": "username",
-  "public_key": "base64-encoded-public-key"
-}
-```
+- **requirements.txt**  
+  Lists Python dependencies required to run the backend (e.g., Flask, bcrypt).
 
-**Response:**
+- **users.json**  
+  Contains serialized user objects with their usernames, public keys, and profile picture URLs.
 
-```json
-{
-  "status": "successful",
-  "message": "User created"
-}
-```
+- **models/**  
+  This folder contains the data models used in the application:
+  - ****init**.py**: Imports and exposes all model classes.
+  - **challenge.py**: Manages challenge creation, verification, and disposal for RSA-based authentication.
+  - **comment.py**: Defines the Comment model used to represent post comments.
+  - **post.py**: Defines the Post model including functionality for saving posts, managing likes, and adding comments.
+  - **user.py**: Defines the User model and methods for registering users and persisting them to disk.
 
-**Errors:**
+- **scripts/**  
+  Contains utility scripts to interact with the backend:
+  - **create_challenge.sh**: Sends a POST request to generate a new challenge for a user.
+  - **register.sh**: Script for registering a new user with their public key and profile picture URL.
+  - **sign.sh**: Uses `signer.py` to sign a challenge using a given RSA private key.
+  - **signer.py**: Python script that signs challenges with an RSA private key.
+  - **verifier.py**: Python script that verifies a signed challenge using the corresponding RSA public key.
+  - **verify.sh**: Script that calls `verifier.py` to check if a challenge signature is valid.
 
-- 400: User already exists
+### API Specification
 
-#### Challenge Creation
+Each endpoint except for `/register` will need a challenge string, generated from the `/create_challenge` endpoint, to be signed by the user's private key. The signed challenge will then be sent to the corresponding endpoint for verification.
 
-**POST** `/create_challenge`
+| Endpoint         | Method(s)   | Description                                                                                                                                                         | Request Payload                                                                                                                   |
+|------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| /register        | POST        | Registers a new user by providing a username, profile picture URL, and public key. Checks for missing fields and duplicate usernames.                              | { "username": string, "profile_picture_url": string, "public_key": string }                                                       |
+| /create_challenge| POST        | Creates an authentication challenge for a user. Disposes of any previous active challenge before issuing a new one.                                                   | { "username": string }                                                                                                            |
+| /login           | POST        | Verifies the signed challenge and logs in the user if authentication is successful. Returns user details upon successful login.                                      | { "username": string, "challenge_signature": string }                                                                             |
+| /toggle_like     | POST, OPTIONS| Toggles the like status of a post by adding or removing the username from the post likes list. Validates the user challenge before executing the toggle.          | { "username": string, "challenge_signature": string, "post_id": string }                                                            |
+| /posts           | POST, OPTIONS| Retrieves all posts with enhanced details including author and comment profile pictures. Validates the user challenge before fetching posts.                        | { "username": string, "challenge_signature": string }                                                                             |
+| /add_comment     | POST, OPTIONS| Adds a comment to a specific post. Validates the user challenge and requires the post ID and comment text to be provided.                                             | { "username": string, "challenge_signature": string, "post_id": string, "comment": string }                                          |
 
-Create an authentication challenge for a user.
+### Data Models
 
-**Request Body:**
+| Model        | Persisted           | Python File          | Description                                                                                                                                           |
+|--------------|---------------------|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| User         | Yes (users.json)    | models/user.py       | Represents a user with a username, public key, and profile picture URL. Users are created, stored, and updated in users.json for persistence.         |
+| Post         | Yes (posts.json)    | models/post.py       | Defines a post with attributes such as title, description, image URL, likes, and comments. Posts are saved in posts.json and can be updated or retrieved. |
+| Comment      | Embedded            | models/comment.py    | Models a comment with a username and description. Comments are embedded within Post objects in posts.json, not persisted as standalone files.         |
+| Challenge    | No                  | models/challenge.py  | Manages authentication challenges for RSA-based authentication. Challenges are created, validated, and disposed in memory during runtime.             |
 
-```json
-{
-  "username": "username"
-}
-```
+In our overall application, each model serves to encapsulate a component of the application's data and behavior:
 
-**Response:**
+- The User model (models/user.py) handles registration and user persistence.
+- The Post model (models/post.py) manages content creation, likes, and comment additions, persisting posts to disk.
+- The Comment model (models/comment.py) provides a structure for managing user comments within posts.
+- The Challenge model (models/challenge.py) implements temporary authentication challenges essential for secure login and actions.
 
-```json
-{
-  "status": "successful",
-  "challenge": {
-    "username": "username",
-    "expire_timestamp": "iso-date-time",
-    "challenge_string": "username:challenge_id"
-  }
-}
-```
+These models work together to support backend operations such as user management, post interactions, and security through challenge-response authentication.
 
-**Errors:**
+## Frontend Documentation
 
-- 400: User does not exist or missing request body
+The frontend portion of the project is a React application built using Vite. Below is an overview of the key files and packages used in the project.
 
-#### Login
+### Directory Structure Overview
 
-**POST** `/login`
+- **src/components/**  
+  Contains reusable UI components.
+  
+- **src/pages/**  
+  Contains page-level components corresponding to different routes in the application.
+  
+- **src/utils/**  
+  Contains utility functions used across the frontend.
+  
+- **App.tsx**  
+  The main application component which sets up routing and global state management.
 
-Log in with a signed challenge.
+### File Explanations
 
-**Request Body:**
+#### src/components/
 
-```json
-{
-  "username": "username",
-  "challenge_signature": "base64-encoded-signature"
-}
-```
+- **Comment.jsx**  
+  Renders individual comments on a post. It handles displaying the comment's author, profile picture, and text. This component is used within the post component to render comments dynamically.
 
-**Response:**
+- **Post.jsx**  
+  Displays a single post including post title, description, image, likes, and comments. It also includes interactive features such as toggling likes and adding new comments. It leverages the Comment component for rendering its list of comments.
 
-```json
-{
-  "status": "successful",
-  "message": "Login successful",
-  "user": {
-    "id": "user-id",
-    "username": "username"
-  }
-}
-```
+#### src/pages/
 
-**Errors:**
+- **LoginPage.jsx**  
+  Provides the login interface. Users are prompted to enter their username and RSA private key. It then uses these credentials to sign a challenge for secure authentication before logging in.
 
-- 400: Missing request body, username, or challenge signature
-- 404: User does not exist
-- 400: No active challenge found
-- 500: User public key not found
-- 401: Invalid signature
+- **PostsPage.jsx**  
+  Displays the feed of posts. This page fetches posts from the backend by generating a signed challenge and updating the UI. It also manages user interactions such as liking posts and adding comments.
 
-#### Get Posts
+- **RegisterPage.jsx**  
+  Allows users to generate an RSA key pair and register by entering a username, using the generated public key, and providing a profile picture URL. This page includes features to copy keys to the clipboard for secure storage.
 
-**GET** `/posts`
+#### src/utils/
 
-Retrieve all posts.
+- **cryptoUtil.js**  
+  Contains a helper function `sign` that uses the Web Cryptography API to import RSA private keys and sign a provided challenge string. The generated signature is encoded in Base64 and returned for use in authentication flows.
 
-**Request Body:**
+#### App.tsx
 
-```json
-{
-  "username": "username",
-  "challenge_signature": "base64-encoded-signature"
-}
-```
+- **App.tsx**  
+  The root component that sets up the React Router for navigating between different pages (login, register, posts). It manages global authentication state using React state hooks and persists user information in localStorage and sessionStorage. Additionally, it renders the navigation bar when a user is logged in.
 
-**Response:**
+### Packages Used (package.json)
 
-```json
-{
-  "status": "successful",
-  "posts": [
-    {
-      "id": "post-id",
-      "username": "author-username",
-      "content": "post-content",
-      "timestamp": "iso-date-time",
-      "likes": ["username1", "username2"],
-      "comments": [
-        {
-          "username": "commenter-username",
-          "content": "comment-content",
-          "timestamp": "iso-date-time"
-        }
-      ]
-    }
-  ]
-}
-```
+- **react & react-dom**  
+  Core libraries for building and rendering the user interface.
 
-**Errors:**
+- **react-router-dom**  
+  Provides routing capabilities to navigate between pages, handling routes like `/login`, `/register`, and `/posts`.
 
-- 400: Missing request body, username, or challenge signature
-- 404: User does not exist
-- 400: No active challenge found
-- 500: User public key not found
-- 401: Invalid signature
+- **tailwindcss**  
+  Used for styling the application, providing utility-first CSS classes to create a responsive and modern UI.
 
-#### Toggle Like
+- **@vitejs/plugin-react**  
+  A Vite plugin that enhances the development experience for React by providing fast HMR and optimized builds.
 
-**POST** `/toggle_like`
+Other dependencies and devDependencies such as ESLint, TypeScript, and globals assist with code quality, type checking, and overall tooling support.
 
-Like or unlike a post.
-
-**Request Body:**
-
-```json
-{
-  "username": "username",
-  "challenge_signature": "base64-encoded-signature",
-  "post_id": "post-id"
-}
-```
-
-**Response:**
-
-```json
-{
-  "status": "successful",
-  "message": "Like toggled"
-}
-```
-
-**Errors:**
-
-- 400: Missing request body, username, challenge signature, or post ID
-- 404: User does not exist or post not found
-- 400: No active challenge found
-- 500: User public key not found
-- 401: Invalid signature
-
-#### Add Comment
-
-**POST** `/add_comment`
-
-Add a comment to a post.
-
-**Request Body:**
-
-```json
-{
-  "username": "username",
-  "challenge_signature": "base64-encoded-signature",
-  "post_id": "post-id",
-  "comment": "comment-text"
-}
-```
-
-**Response:**
-
-```json
-{
-  "status": "successful",
-  "message": "Comment added"
-}
-```
-
-**Errors:**
-
-- 400: Missing request body, username, challenge signature, post ID, or comment
-- 404: User does not exist or post not found
-- 400: No active challenge found
-- 500: User public key not found
-- 401: Invalid signature
-
-### Security Notes
-
-1. Each challenge is single-use and invalidated after verification
-2. Authentication is required for all operations (except key generation and registration)
-3. RSA 2048-bit signatures with PSS padding are used for authentication
-4. Challenges expire (though expiration time is not specified in the code)
+This documentation outlines the structure and purpose of the main components in the frontend, as well as the key packages utilized to build a secure and responsive application.
