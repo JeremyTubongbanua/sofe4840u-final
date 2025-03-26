@@ -7,7 +7,7 @@ const Post = ({ post = {}, currentUser, onAddComment, onToggleLike }) => {
   const handleSubmitComment = (e) => {
     e.preventDefault();
     if (newComment.trim()) {
-      onAddComment(post.id, newComment);
+      onAddComment(post.post_id, newComment);
       setNewComment('');
     }
   };
@@ -24,23 +24,30 @@ const Post = ({ post = {}, currentUser, onAddComment, onToggleLike }) => {
       <div className="post-header">
         <div className="author-info">
           <img 
-            src={post?.authorPic || '/default-profile.png'} 
-            alt={post?.author || 'Unknown'} 
+            src={post?.author_profile_picture || '/default-profile.png'} 
+            alt={post?.author_id || 'Unknown'} 
             className="profile-pic" 
           />
-          <span className="author-name">{post?.author || 'Unknown'}</span>
+          <span className="author-name">{post?.author_id || 'Unknown'}</span>
         </div>
       </div>
       
       <div className="post-content">
         <h3 className="post-title">{post?.title || 'Untitled Post'}</h3>
         <p className="post-description">{post?.description || 'No description'}</p>
+        {post?.image_url && (
+          <img 
+            src={post.image_url} 
+            alt={post.title || 'Post image'} 
+            className="post-image" 
+          />
+        )}
       </div>
       
       <div className="post-actions">
         <button 
           className={`like-button ${userLiked ? 'liked' : ''}`}
-          onClick={() => onToggleLike(post.id)}
+          onClick={() => onToggleLike(post.post_id)}
         >
           {userLiked ? 'Unlike' : 'Like'} ({likes.length})
         </button>
@@ -62,7 +69,7 @@ const Post = ({ post = {}, currentUser, onAddComment, onToggleLike }) => {
         
         <div className="comments-list">
           {comments.map((comment, index) => (
-            <Comment key={comment.id || `comment-${index}`} comment={comment} />
+            <Comment key={`comment-${post.post_id}-${index}`} comment={comment} />
           ))}
         </div>
       </div>

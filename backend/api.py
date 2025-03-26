@@ -16,7 +16,34 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:5173", "supports_crede
 load_users_state('./users.json')
 load_posts_state('./posts.json')
 
-from models.challenge import create_challenge, get_active_challenge
+@app.route('/register', methods=['POST'])
+def register_endpoint():
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({'status': 'unsuccessful', 'message': 'Missing request body'}), 400
+    
+    if 'username' not in data:
+        return jsonify({'status': 'unsuccessful', 'message': 'Missing username'}), 400
+    
+    if 'profile_picture_url' not in data:
+        return jsonify({'status': 'unsuccessful', 'message': 'Missing profile picture URL'}), 400
+    
+    username = data['username']
+    public_key = data['public_key']
+    profile_picture_url = data['profile_picture_url']
+    
+    user = get_user_from_username(username)
+    if user:
+        return jsonify({'status': 'unsuccessful', 'message': 'User already exists'}), 400
+    
+    user = User(username=username, 
+                public_key=public_key, 
+                profile_picture_url=profile_picture_url)
+    users.append(user)
+    user.save()
+    
+    return jsonify({'status': 'successful', 'message': 'User registered'}), 200
 
 @app.route('/create_challenge', methods=['POST'])
 def create_challenge_endpoint():
@@ -40,25 +67,39 @@ def create_challenge_endpoint():
 
 
 def verify_and_dispose_challenge(username, challenge_signature):
+    print(f"Verifying challenge for user: {username}")
+    
     user = get_user_from_username(username)
     if not user:
+        print(f"User {username} does not exist")
         return False, "User does not exist"
         
     challenge = get_active_challenge(username)
     if not challenge:
+        print(f"No active challenge found for user {username}")
         return False, f"No active challenge found for user {username}"
-        
+    original_challenge = challenge.challenge_string
+    print(f"Original Challenge: {original_challenge}")
+    
+    print(f"Challenge Signature: {challenge_signature}")
+    
     public_key_b64 = user.public_key
-    if not public_key_b64:
+    if public_key_b64:
+        truncated_pk = public_key_b64[:5] + "..."
+        print(f"User Public Key (truncated): {truncated_pk}")
+    else:
+        print(f"Public key for user {username} not found")
         return False, "User public key not found"
 
     is_valid = verify_challenge_response(username, challenge_signature)
     
     if not is_valid:
+        print(f"Invalid signature for user {username}")
         challenge.dispose()
         return False, "Invalid signature"
     
     challenge.dispose()
+    print(f"Challenge verified and disposed for user {username}")
     return True, "Success"
 
 
@@ -79,28 +120,15 @@ def login():
         username = data['username']
         challenge_signature = data['challenge_signature']
 
+        is_valid, message = verify_and_dispose_challenge(username, challenge_signature)
+        if not is_valid:
+            return jsonify({'status': 'unsuccessful', 'message': message}), 401
+
         user = get_user_from_username(username)
         if not user:
             return jsonify({'status': 'unsuccessful', 'message': 'User does not exist'}), 404
-
-        challenge = get_active_challenge(username)
-        if not challenge:
-            return jsonify({'status': 'unsuccessful', 'message': f'No active challenge found for user {username}'}), 400
-
-        public_key_b64 = user.public_key
-        if not public_key_b64:
-            return jsonify({'status': 'unsuccessful', 'message': 'User public key not found'}), 500
-
-        challenge_string = challenge.challenge_string
-
-        is_valid = verify_challenge_response(username, challenge_signature)
-
-        challenge.dispose()
-
-        if not is_valid:
-            return jsonify({'status': 'unsuccessful', 'message': 'Invalid signature'}), 401
         
-        print(f"Login successful for user {username}. They successfully signed {challenge_string} with their private key. Their public key is: \"{public_key_b64}\" and challenge signature they generated is {challenge_signature}")
+        print(f"Login successful for user {username}.")
 
         return jsonify({
             'status': 'successful',
@@ -112,10 +140,6 @@ def login():
         }), 200
 
     except Exception as e:
-        if 'username' in locals() and username:
-            challenge = get_active_challenge(username)
-            if challenge:
-                challenge.dispose()
         print(f"Login error: {str(e)}")
         return jsonify({'status': 'unsuccessful', 'message': 'An error occurred during login'}), 500
 
@@ -145,7 +169,8 @@ def toggle_like():
     is_valid, message = verify_and_dispose_challenge(username, challenge_signature)
     if not is_valid:
         return jsonify({'status': 'unsuccessful', 'message': message}), 401
-
+    
+    print(f'User {username} toggled like on post {post_id}')
     post = get_post_by_id(post_id)
     if not post:
         return jsonify({'status': 'unsuccessful', 'message': 'Post not found'}), 404
@@ -153,6 +178,7 @@ def toggle_like():
         post.likes.remove(username)
     else:
         post.likes.append(username)
+    post.save()
     return jsonify({'status': 'successful', 'message': 'Like toggled'}), 200
 
 
@@ -182,8 +208,25 @@ def get_posts_req():
     posts = get_posts()
     print(f'User {username} requested posts. Found {len(posts)} posts')
     
-    return jsonify({'status': 'successful', 'posts': [post.to_dict() for post in posts]}), 200
+    user_profiles = {}
+    for user in users:
+        user_profiles[user.username] = user.profile_picture_url
     
+    enhanced_posts = []
+    for post in posts:
+        post_dict = post.to_dict()
+        
+        author_id = post_dict['author_id']
+        post_dict['author_profile_picture'] = user_profiles.get(author_id)
+        
+        for comment in post_dict.get('comments', []):
+            comment_author = comment.get('username')
+            if comment_author:
+                comment['profile_picture_url'] = user_profiles.get(comment_author)
+        
+        enhanced_posts.append(post_dict)
+    
+    return jsonify({'status': 'successful', 'posts': enhanced_posts}), 200    
 
 @app.route('/add_comment', methods=['POST', 'OPTIONS'])
 def add_comment():

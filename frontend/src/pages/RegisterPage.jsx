@@ -63,7 +63,7 @@ const RegisterPage = () => {
         body: JSON.stringify({
           username,
           public_key: keyPair.publicKey,
-          profile_pic: profilePic
+          profile_picture_url: profilePic
         }),
       });
       

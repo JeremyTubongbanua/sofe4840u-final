@@ -1,384 +1,445 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  body {
-    background-color: #f5f5f5;
-    color: #333;
-  }
-  
-  .app {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  nav {
-    background-color: #1a1a1a;
-    padding: 15px 20px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-  }
-  
-  .nav-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 18px;
-  }
-  
-  .logout-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .logout-btn:hover {
-    background-color: #bd2130;
-  }
-  
-  .auth-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-  }
-  
-  .auth-container {
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
-  }
-  
-  .auth-container h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #333;
-  }
-  
-  .auth-container h2 {
-    margin: 20px 0 15px;
-    color: #444;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-  
-  .form-group textarea {
-    resize: vertical;
-  }
-  
-  .copy-field {
-    display: flex;
-    align-items: flex-start;
-  }
-  
-  .copy-field textarea {
-    flex: 1;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  
-  .copy-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    height: 42px;
-  }
-  
-  .copy-btn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
-  .copy-btn:hover:not(:disabled) {
-    background-color: #0069d9;
-  }
-  
-  .primary-btn, 
-  .secondary-btn {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .primary-btn {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .primary-btn:hover:not(:disabled) {
-    background-color: #218838;
-  }
-  
-  .primary-btn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
-  .secondary-btn {
-    background-color: #6c757d;
-    color: white;
-    margin-bottom: 15px;
-  }
-  
-  .secondary-btn:hover {
-    background-color: #5a6268;
-  }
-  
-  .auth-footer {
-    margin-top: 30px;
-    text-align: center;
-  }
-  
-  .auth-footer p {
-    margin-bottom: 5px;
-    color: #666;
-  }
-  
-  .auth-footer a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .auth-footer a:hover {
-    text-decoration: underline;
-  }
-  
-  .profile-preview {
-    margin-top: 10px;
-    text-align: center;
-  }
-  
-  .profile-preview img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ddd;
-  }
-  
-  .posts-page {
-    padding: 20px 0;
-  }
-  
-  .posts-container {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .create-post {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-  }
-  
-  .create-post h2 {
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .posts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .post {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-  
-  .post-header {
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .author-info {
-    display: flex;
-    align-items: center;
-  }
-  
-  .profile-pic {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 10px;
-  }
-  
-  .profile-pic.small {
-    width: 30px;
-    height: 30px;
-  }
-  
-  .author-name {
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .post-content {
-    padding: 15px;
-  }
-  
-  .post-title {
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  .post-description {
-    color: #555;
-    line-height: 1.5;
-  }
-  
-  .post-actions {
-    padding: 0 15px 15px;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .like-button {
-    background-color: transparent;
-    border: 1px solid #007bff;
-    color: #007bff;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-  }
-  
-  .like-button:hover {
-    background-color: #f0f7ff;
-  }
-  
-  .like-button.liked {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .comments-section {
-    padding: 15px;
-    border-top: 1px solid #eee;
-  }
-  
-  .comments-section h4 {
-    margin-bottom: 15px;
-    color: #333;
-  }
-  
-  .add-comment {
-    display: flex;
-    margin-bottom: 15px;
-  }
-  
-  .add-comment input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-    font-size: 14px;
-  }
-  
-  .add-comment button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .add-comment button:hover {
-    background-color: #0069d9;
-  }
-  
-  .comments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .comment {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 4px;
-  }
-  
-  .comment-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-  
-  .comment-author {
-    font-weight: 500;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  .comment-content {
-    font-size: 14px;
-    color: #555;
-    margin-left: 40px;
-  }
-  
-  .no-posts {
-    text-align: center;
-    padding: 30px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    color: #666;
-    font-size: 18px;
-  }
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+nav {
+  background-color: #1a1a1a;
+  padding: 15px 20px;
+  margin-bottom: 30px;
+  border-radius: 8px;
+}
+
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.logout-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.logout-btn:hover {
+  background-color: #bd2130;
+}
+
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.auth-container {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+.auth-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.auth-container h2 {
+  margin: 20px 0 15px;
+  color: #444;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.copy-field {
+  display: flex;
+  align-items: flex-start;
+}
+
+.copy-field textarea {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.copy-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  height: 42px;
+}
+
+.copy-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.copy-btn:hover:not(:disabled) {
+  background-color: #0069d9;
+}
+
+.primary-btn, 
+.secondary-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.primary-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.primary-btn:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.primary-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.secondary-btn {
+  background-color: #6c757d;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.secondary-btn:hover {
+  background-color: #5a6268;
+}
+
+.auth-footer {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.auth-footer p {
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.auth-footer a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.profile-preview {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.profile-preview img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.posts-page {
+  padding: 20px 0;
+}
+
+.posts-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.create-post {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.create-post h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.post {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.post-header {
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  background-color: #e0e0e0; /* Fallback color if image fails to load */
+}
+
+.profile-pic.small {
+  width: 30px;
+  height: 30px;
+}
+
+.author-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.post-content {
+  padding: 15px;
+}
+
+.post-image {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  margin-top: 15px;
+  border-radius: 4px;
+}
+
+.post-title {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.post-description {
+  color: #555;
+  line-height: 1.5;
+}
+
+.post-actions {
+  padding: 0 15px 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.like-button {
+  background-color: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.like-button:hover {
+  background-color: #f0f7ff;
+}
+
+.like-button.liked {
+  background-color: #007bff;
+  color: white;
+}
+
+.comments-section {
+  padding: 15px;
+  border-top: 1px solid #eee;
+}
+
+.comments-section h4 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.add-comment {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.add-comment input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  font-size: 14px;
+}
+
+.add-comment button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-comment button:hover {
+  background-color: #0069d9;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.comment-profile-pic {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  background-color: #e0e0e0; /* Fallback color if image fails to load */
+}
+
+.comment-author {
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
+.comment-content {
+  font-size: 14px;
+  color: #555;
+  margin-left: 40px;
+}
+
+.no-posts {
+  text-align: center;
+  padding: 30px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #666;
+  font-size: 18px;
+}
+
+.loading {
+  text-align: center;
+  padding: 30px;
+  color: #007bff;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.error-container {
+  text-align: center;
+  padding: 30px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #dc3545;
+  margin-bottom: 20px;
+}
+
+.error-container h2 {
+  margin-bottom: 10px;
+}
+
+.error-container button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  margin-top: 15px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.error-container button:hover {
+  background-color: #0069d9;
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}

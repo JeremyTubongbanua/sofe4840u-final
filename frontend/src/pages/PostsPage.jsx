@@ -20,7 +20,6 @@ const PostsPage = ({ currentUser }) => {
       body: JSON.stringify({ username }),
       credentials: "include",
     });
-
     const challengeData = await challengeResponse.json();
     
     if (challengeData.status !== "successful") {
@@ -28,7 +27,6 @@ const PostsPage = ({ currentUser }) => {
         "Failed to get challenge: " + (challengeData.message || "Unknown error")
       );
     }
-
     return challengeData.challenge;
   };
 
@@ -52,7 +50,6 @@ const PostsPage = ({ currentUser }) => {
       
       const challenge = await getChallenge(currentUser.username);
       const signature = await createSignature(challenge, currentUser.privateKey);
-      
       console.log("Generated signature for /posts request");
 
       const postsResponse = await fetch(`${API_URL}/posts`, {
@@ -71,13 +68,7 @@ const PostsPage = ({ currentUser }) => {
       console.log("Posts response:", postsData);
 
       if (postsData.status === "successful") {
-        const formattedPosts = postsData.posts.map((post) => ({
-          ...post,
-          id: post.post_id,
-          likes: post.likes || [],
-          comments: post.comments || [],
-        }));
-        setPosts(formattedPosts);
+        setPosts(postsData.posts);
         setError(null);
       } else {
         setError("Failed to fetch posts: " + postsData.message);
@@ -154,12 +145,10 @@ const PostsPage = ({ currentUser }) => {
       if (responseData.status === "successful") {
         setPosts(
           posts.map((post) => {
-            if (post.id === postId || post.post_id === postId) {
+            if (post.post_id === postId) {
               const userLiked = post.likes.includes(currentUser.username);
               const updatedLikes = userLiked
-                ? post.likes.filter(
-                    (username) => username !== currentUser.username
-                  )
+                ? post.likes.filter(username => username !== currentUser.username)
                 : [...post.likes, currentUser.username];
 
               return { ...post, likes: updatedLikes };
@@ -186,7 +175,6 @@ const PostsPage = ({ currentUser }) => {
         setLoading(false);
       }
     }
-
     return () => {
       fetchInProgress.current = false;
     };
@@ -213,14 +201,13 @@ const PostsPage = ({ currentUser }) => {
   return (
     <div className="posts-page">
       <h1 className="page-title">Feed</h1>
-
       {posts.length === 0 ? (
         <div className="no-posts">No posts available</div>
       ) : (
         <div className="posts-container">
           {posts.map((post) => (
             <Post
-              key={post.id || post.post_id || `post-${posts.indexOf(post)}`}
+              key={post.post_id}
               post={post}
               currentUser={currentUser}
               onAddComment={handleAddComment}
