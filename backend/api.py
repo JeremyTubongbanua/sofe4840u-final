@@ -5,14 +5,13 @@ import json
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
-from util import verify_signature
 from models.user import get_user_from_username, User, users, load_state as load_users_state
 from models.challenge import challenges, create_challenge, challenges, get_active_challenge, verify_challenge_response
 from models.post import get_posts, get_post_by_id, load_state as load_posts_state
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173", "supports_credentials": True}})
 
 load_users_state('./users.json')
 load_posts_state('./posts.json')
@@ -121,8 +120,11 @@ def login():
         return jsonify({'status': 'unsuccessful', 'message': 'An error occurred during login'}), 500
 
 
-@app.route('/toggle_like', methods=['POST'])
+@app.route('/toggle_like', methods=['POST', 'OPTIONS'])
 def toggle_like():
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     data = request.get_json()
     if not data:
         return jsonify({'status': 'unsuccessful', 'message': 'Missing request body'}), 400
@@ -154,8 +156,11 @@ def toggle_like():
     return jsonify({'status': 'successful', 'message': 'Like toggled'}), 200
 
 
-@app.route('/posts', methods=['POST'])
+@app.route('/posts', methods=['POST', 'OPTIONS'])
 def get_posts_req():
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     data = request.get_json()
     
     if not data:
@@ -180,8 +185,11 @@ def get_posts_req():
     return jsonify({'status': 'successful', 'posts': [post.to_dict() for post in posts]}), 200
     
 
-@app.route('/add_comment', methods=['POST'])
+@app.route('/add_comment', methods=['POST', 'OPTIONS'])
 def add_comment():
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     data = request.get_json()
     
     if not data:

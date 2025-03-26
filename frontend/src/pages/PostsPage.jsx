@@ -9,6 +9,7 @@ const PostsPage = ({ currentUser }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const fetchInProgress = useRef(false);
+  const mountedRef = useRef(false);
 
   const getChallenge = async (username) => {
     const challengeResponse = await fetch(`${API_URL}/create_challenge`, {
@@ -17,6 +18,7 @@ const PostsPage = ({ currentUser }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username }),
+      credentials: "include",
     });
 
     const challengeData = await challengeResponse.json();
@@ -62,6 +64,7 @@ const PostsPage = ({ currentUser }) => {
           username: currentUser.username,
           challenge_signature: signature,
         }),
+        credentials: "include",
       });
 
       const postsData = await postsResponse.json();
@@ -102,7 +105,6 @@ const PostsPage = ({ currentUser }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
         body: JSON.stringify({
           username: currentUser.username,
@@ -139,7 +141,6 @@ const PostsPage = ({ currentUser }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
         body: JSON.stringify({
           username: currentUser.username,
@@ -176,10 +177,14 @@ const PostsPage = ({ currentUser }) => {
   };
 
   useEffect(() => {
-    if (currentUser?.username) {
-      fetchPosts();
-    } else {
-      setLoading(false);
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      
+      if (currentUser?.username) {
+        fetchPosts();
+      } else {
+        setLoading(false);
+      }
     }
 
     return () => {

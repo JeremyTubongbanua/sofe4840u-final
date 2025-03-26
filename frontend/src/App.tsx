@@ -10,10 +10,10 @@ const App = () => {
     const username = localStorage.getItem('username');
     const privateKey = sessionStorage.getItem('privateKey');
     
-    if (username) {
+    if (username && privateKey) {
       return {
         username,
-        privateKey: privateKey || ''
+        privateKey
       };
     }
     return null;
@@ -46,7 +46,9 @@ const App = () => {
           </nav>
         )}
         <Routes>
-          <Route path="/login" element={<LoginPage setCurrentUser={setCurrentUser} />} />
+          <Route path="/login" element={
+            currentUser ? <Navigate to="/posts" /> : <LoginPage setCurrentUser={setCurrentUser} />
+          } />
           <Route path="/register" element={
             currentUser ? <Navigate to="/posts" /> : <RegisterPage />
           } />
