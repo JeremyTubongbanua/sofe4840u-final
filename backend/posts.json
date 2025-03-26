@@ -1,0 +1,23 @@
+{
+  "posts": [
+    {
+      "post_id": "26490ea8-78cb-4be2-a783-cc78b808de3c",
+      "author_id": "test",
+      "title": "Cows",
+      "description": "Picture of cows",
+      "image_url": "https://images.pexels.com/photos/422202/pexels-photo-422202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "created_at": "2025-03-26T04:56:59.332308",
+      "updated_at": "2025-03-26T04:56:59.332306",
+      "likes": [
+        "test_2"
+      ],
+      "comments": [
+        {
+          "username": "test",
+          "description": "Cows are cool!"
+        }
+      ]
+    }
+  ],
+  "last_updated": "2025-03-26T04:56:59.332313"
+}

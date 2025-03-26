@@ -1,0 +1,10 @@
+{
+  "challenges": [
+    {
+      "username": "test",
+      "expire_timestamp": 1742965079,
+      "challenge_string": "test:41ca96ee-6770-4194-89f8-6fcc509effa6"
+    }
+  ],
+  "last_updated": "2025-03-26T05:12:29.603026"
+}

@@ -6,37 +6,19 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 from util import verify_signature
-from models.user import get_user_from_username, User, users
-from models.challenge import create_challenge, challenges
-from models.post import get_posts
+from models.user import get_user_from_username, User, users, load_state as load_users_state
+from models.challenge import challenges, create_challenge, challenges, get_active_challenge, load_state as load_challenges_state, verify_challenge_response
+from models.post import posts, get_posts, get_post_by_id, load_state as load_posts_state
 from models import create_default_data
+from flask_cors import CORS
 
 app = Flask(__name__)
-create_default_data()
+CORS(app)
+# create_default_data()
 
-@app.route('/generate_rsa_2048_keypair', methods=['GET'])
-def generate_rsa_2048_keypair():
-    key = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=2048,
-        backend=default_backend()
-    )
-
-    private_key = key.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.TraditionalOpenSSL,
-        encryption_algorithm=serialization.NoEncryption()
-    ).decode().replace("-----BEGIN RSA PRIVATE KEY-----\n", "").replace("\n-----END RSA PRIVATE KEY-----\n", "")
-
-    public_key = key.public_key().public_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
-    ).decode().replace("-----BEGIN PUBLIC KEY-----\n", "").replace("\n-----END PUBLIC KEY-----\n", "")
-
-    return jsonify({
-        'private_key': private_key,
-        'public_key': public_key
-    })
+load_users_state('./users.json')
+load_challenges_state('./challenges.json')
+load_posts_state('./posts.json')
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -58,8 +40,6 @@ def register():
 
     user = User(username, public_key)
     user.save()
-
-    print([user.to_dict() for user in users])
 
     return jsonify({'status': 'successful', 'message': 'User created'}), 201
 
@@ -117,20 +97,22 @@ def login():
             return jsonify({'status': 'unsuccessful', 'message': 'User public key not found'}), 500
 
         challenge_string = challenge.challenge_string
-        is_valid = verify_signature(challenge_string, challenge_signature, public_key_b64)
+
+        # Use the imported verify_challenge_response function instead of verify_signature
+        is_valid = verify_challenge_response(username, challenge_signature)
 
         if not is_valid:
             return jsonify({'status': 'unsuccessful', 'message': 'Invalid signature'}), 401
 
-        challenge.dipose()
+        # Change dispose() to dispose()
+        challenge.dispose()
 
         return jsonify({
             'status': 'successful',
             'message': 'Login successful',
-            'auth_token': auth_token,
             'user': {
-                'id': user.id,
-                'username': user.username
+                'username': user.username,
+                'profile_picture_url': user.profile_picture_url
             }
         }), 200
 
@@ -143,51 +125,43 @@ def toggle_like():
     data = request.get_json()
     if not data:
         return jsonify({'status': 'unsuccessful', 'message': 'Missing request body'}), 400
-    
+
     if 'username' not in data:
         return jsonify({'status': 'unsuccessful', 'message': 'Missing username'}), 400
-    
+
     if 'challenge_signature' not in data:
         return jsonify({'status': 'unsuccessful', 'message': 'Missing challenge signature'}), 400
-    
+
     if 'post_id' not in data:
         return jsonify({'status': 'unsuccessful', 'message': 'Missing post ID'}), 400
-    
+
     username = data['username']
     challenge_signature = data['challenge_signature']
     post_id = data['post_id']
-    
+
     user = get_user_from_username(username)
     if not user:
         return jsonify({'status': 'unsuccessful', 'message': 'User does not exist'}), 404
-        
+
     challenge = get_active_challenge(username)
     if not challenge:
         return jsonify({'status': 'unsuccessful', 'message': f'No active challenge found for user {username}'}), 400
-        
+
     public_key_b64 = user.public_key
     if not public_key_b64:
         return jsonify({'status': 'unsuccessful', 'message': 'User public key not found'}), 500
-        
     challenge_string = challenge.challenge_string
-    
     is_valid = verify_signature(challenge_string, challenge_signature, public_key_b64)
-    
     if not is_valid:
         return jsonify({'status': 'unsuccessful', 'message': 'Invalid signature'}), 401
-        
     post = get_post_by_id(post_id)
     if not post:
         return jsonify({'status': 'unsuccessful', 'message': 'Post not found'}), 404
-        
     if username in post.likes:
         post.likes.remove(username)
     else:
         post.likes.append(username)
-    
     return jsonify({'status': 'successful', 'message': 'Like toggled'}), 200
-    
-    pass
 
 @app.route('/posts', methods=['GET'])
 def posts():
