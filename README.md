@@ -4,7 +4,7 @@ Final Project for SOFE 4840U - Software and Computer Security
 
 ## Backend Documentation
 
-### Directory Structure
+### Backend Directory Structure
 
 ```sh
 backend
@@ -97,11 +97,9 @@ These models work together to support backend operations such as user management
 
 The frontend portion of the project is a React application built using Vite. Below is an overview of the key files and packages used in the project.
 
-### Directory Structure
+### Frontend Directory Structure
 
 ```md
-### Directory Structure Overview
-
 frontend
 ├── index.html  
 ├── package.json  
