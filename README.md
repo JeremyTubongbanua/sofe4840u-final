@@ -2,6 +2,25 @@
 
 Final Project for SOFE 4840U - Software and Computer Security
 
+By Andy Lau, Emily Lai, Jeremy Mark Tubongbanua, and Natasha Naorem
+
+## Table of Contents
+
+- [sofe4840u-final](#sofe4840u-final)
+  - [Backend Documentation](#backend-documentation)
+    - [Backend Directory Structure](#backend-directory-structure)
+    - [File Explanations](#file-explanations)
+    - [API Specification](#api-specification)
+    - [Data Models](#data-models)
+  - [Frontend Documentation](#frontend-documentation)
+    - [Frontend Directory Structure](#frontend-directory-structure)
+    - [File Explanations](#file-explanations-1)
+      - [src/components/](#src-components-)
+      - [src/pages/](#src-pages-)
+      - [src/utils/](#src-utils-)
+      - [App.tsx](#apptsx)
+    - [Packages Used (package.json)](#packages-used--packagejson-)
+
 ## Backend Documentation
 
 ### Backend Directory Structure
