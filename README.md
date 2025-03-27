@@ -15,11 +15,11 @@ By Andy Lau, Emily Lai, Jeremy Mark Tubongbanua, and Natasha Naorem
   - [Frontend Documentation](#frontend-documentation)
     - [Frontend Directory Structure](#frontend-directory-structure)
     - [File Explanations](#file-explanations-1)
-      - [src/components/](#src-components-)
-      - [src/pages/](#src-pages-)
-      - [src/utils/](#src-utils-)
+      - [src/components/](#srccomponents)
+      - [src/pages/](#srcpages)
+      - [src/utils/](#srcutils)
       - [App.tsx](#apptsx)
-    - [Packages Used (package.json)](#packages-used--packagejson-)
+    - [Packages Used (package.json)](#packages-used-packagejson)
 
 ## Backend Documentation
 
